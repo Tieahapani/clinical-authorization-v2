@@ -30,6 +30,10 @@ Synthetic PDF packet
 5. Read-only reviewer interface (app/review_ui.py)
 ```
 
+## Reviewer UI
+
+![Prior Authorization Review UI](docs/review_ui_screenshot.jpg)
+
 ## Running it
 
 ```bash
