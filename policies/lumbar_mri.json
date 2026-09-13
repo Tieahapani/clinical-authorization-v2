@@ -1,0 +1,42 @@
+[
+  {
+    "id": "NRC.weakness",
+    "description": "Evidence of neurologic weakness is documented."
+  },
+  {
+    "id": "NRC.sensory_loss",
+    "description": "Evidence of sensory loss (numbness/tingling) in a dermatomal pattern is documented."
+  },
+  {
+    "id": "NRC.reflex_change",
+    "description": "Evidence of an abnormal or asymmetric reflex finding is documented."
+  },
+  {
+    "id": "NRC.bowel_bladder",
+    "description": "Evidence of bowel or bladder dysfunction (possible cauda equina concern) is documented."
+  },
+  {
+    "id": "CM.medication",
+    "description": "Conservative medication treatment (e.g. NSAIDs, muscle relaxants) is documented."
+  },
+  {
+    "id": "CM.physical_therapy",
+    "description": "Physical therapy is documented."
+  },
+  {
+    "id": "CM.duration",
+    "description": "Conservative treatment duration of at least 6 weeks is documented."
+  },
+  {
+    "id": "SX.duration",
+    "description": "Symptom duration of at least 6 weeks is documented."
+  },
+  {
+    "id": "IMG.prior_imaging",
+    "description": "Prior imaging (e.g. X-ray) results are documented."
+  },
+  {
+    "id": "RF.red_flag",
+    "description": "A red-flag symptom (e.g. trauma, unexplained weight loss, fever, history of cancer) is documented as present or explicitly ruled out."
+  }
+]
