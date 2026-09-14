@@ -404,33 +404,4 @@ Planned improvements include:
 
 ---
 
-## What This Project Demonstrates
 
-Although prior authorization is the example workflow, the broader engineering pattern is:
-
-```text
-Unstructured documents
-        ↓
-LLM-assisted understanding
-        ↓
-Structured, source-backed evidence
-        ↓
-Deterministic workflow logic
-        ↓
-Human-verifiable result
-```
-
-The same approach can be applied to other document-heavy workflows where information needs to be extracted, verified, and turned into structured actions.
-
----
-
-## Safety
-
-This repository is for educational and portfolio purposes only.
-
-- All included patient information is synthetic.
-- The included review criteria are synthetic educational examples.
-- The application is not a medical device.
-- It does not provide medical advice.
-- It is not intended to make real prior authorization or coverage decisions.
-- It should not be used with real patient information.
