@@ -20,6 +20,7 @@ from extract_text import extract_pages
 from policy import load_policy
 from evidence import evaluate_all_criteria
 from decision import decide_authorization
+from audit import build_audit_record, append_audit_record, AUDIT_LOG_PATH
 
 EVIDENCE_OUTPUT_PATH = "output/evidence_report.json"
 DECISION_OUTPUT_PATH = "output/decision.json"
@@ -43,3 +44,7 @@ print(outcome)
 with open(DECISION_OUTPUT_PATH, "w") as f:
     json.dump(outcome, f, indent=2)
 print(f"Wrote {DECISION_OUTPUT_PATH}")
+
+audit_record = build_audit_record(sample_path, results, outcome)
+append_audit_record(audit_record)
+print(f"Appended audit record to {AUDIT_LOG_PATH}")
