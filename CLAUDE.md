@@ -87,8 +87,6 @@ Synthetic PDF packet
         |
         +--> approve
         |
-        +--> request_information
-        |
         +--> human_review
         |
         v
@@ -258,11 +256,7 @@ If all required criteria are satisfied:
 
     approve
 
-If one or more criteria are not_found:
-
-    request_information
-
-If one or more criteria are unknown:
+If one or more criteria are not_found or unknown:
 
     human_review
 

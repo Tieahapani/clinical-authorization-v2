@@ -63,3 +63,8 @@ for item in merged_criteria:
 
         if item["status"] == "satisfied":
             st.write(f"Page {item['page_number']}: \"{item['quote']}\"")
+            if item.get("concern_present") is True:
+                st.warning(
+                    "A red flag / warning sign is actually present here - "
+                    "needs human review, not an automatic bypass."
+                )

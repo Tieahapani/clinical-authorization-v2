@@ -31,6 +31,7 @@ def merge_criteria_with_evidence(criteria, evidence_report):
             "status": evidence["status"],
             "page_number": evidence.get("page_number"),
             "quote": evidence.get("quote"),
+            "concern_present": evidence.get("concern_present"),
         })
 
     return merged

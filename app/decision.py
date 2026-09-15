@@ -2,33 +2,55 @@
 Milestone 6: deterministic decision engine.
 
 Takes the evidence report (one status per criterion, from evidence.py)
+plus the policy criteria (for each criterion's group, from policy.py)
 and applies fixed rules to produce one workflow outcome. No LLM calls,
 no judgment calls happen here - only plain logic on data we already have.
 
-Rules:
-- all criteria satisfied  -> approve
-- any criterion unknown   -> human_review (the system could not safely
-                              determine whether evidence satisfies the
-                              criterion - this needs a person's judgment,
-                              not just more paperwork)
-- otherwise, any criterion
-  not_found                -> request_information (evidence is simply
-                              missing - ask the provider to supply it)
+Criteria are grouped in the policy (see policies/lumbar_mri.json) so
+that criteria representing alternative ways to satisfy the same
+requirement - for example, any one of four neuro findings, or either
+medication or physical therapy for conservative care - don't each have
+to be individually satisfied. A group is met if at least one of its
+members is satisfied. A criterion with no listed group is its own
+singleton group, so it is unaffected by grouping and must be satisfied
+on its own.
 
-unknown takes precedence over not_found when both occur.
+Rules:
+- any criterion satisfied with concern_present = true -> human_review
+  (a red flag / warning sign is actually present in the record - this
+  never bypasses review and never triggers an automatic denial, it just
+  means a person needs to look closely, per real prior-authorization
+  practice)
+- any group with no satisfied member -> human_review (a person needs to
+  look at this case - either the system couldn't safely judge the
+  evidence for every member of that group, or the evidence is simply
+  missing)
+- every group has at least one satisfied member, and no concern present
+  -> approve
 """
 
 
-def decide_authorization(results):
-    unknown = [r for r in results if r["status"] == "unknown"]
-    not_found = [r for r in results if r["status"] == "not_found"]
+def decide_authorization(results, criteria=None):
+    criteria = criteria or []
+    group_by_id = {c["id"]: c.get("group", c["id"]) for c in criteria}
 
-    if unknown:
-        reasons = [f"{r['criterion_id']}: unknown" for r in unknown]
+    concerns = [r for r in results if r.get("concern_present") is True]
+    if concerns:
+        reasons = [f"{r['criterion_id']}: concern_present" for r in concerns]
         return {"decision": "human_review", "reasons": reasons}
 
-    if not_found:
-        reasons = [f"{r['criterion_id']}: not_found" for r in not_found]
-        return {"decision": "request_information", "reasons": reasons}
+    groups = {}
+    for r in results:
+        group = group_by_id.get(r["criterion_id"], r["criterion_id"])
+        groups.setdefault(group, []).append(r)
+
+    reasons = []
+    for members in groups.values():
+        if any(m["status"] == "satisfied" for m in members):
+            continue
+        reasons.extend(f"{m['criterion_id']}: {m['status']}" for m in members)
+
+    if reasons:
+        return {"decision": "human_review", "reasons": reasons}
 
     return {"decision": "approve", "reasons": []}

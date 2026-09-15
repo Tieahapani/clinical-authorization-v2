@@ -1,42 +1,54 @@
 [
   {
     "id": "NRC.weakness",
-    "description": "Evidence of neurologic weakness is documented."
+    "description": "Evidence of neurologic weakness is documented.",
+    "group": "neuro_finding"
   },
   {
     "id": "NRC.sensory_loss",
-    "description": "Evidence of sensory loss (numbness/tingling) in a dermatomal pattern is documented."
+    "description": "Evidence of sensory loss (numbness/tingling) in a dermatomal pattern is documented.",
+    "group": "neuro_finding"
   },
   {
     "id": "NRC.reflex_change",
-    "description": "Evidence of an abnormal or asymmetric reflex finding is documented."
+    "description": "Evidence of an abnormal or asymmetric reflex finding is documented.",
+    "group": "neuro_finding"
   },
   {
     "id": "NRC.bowel_bladder",
-    "description": "Evidence of bowel or bladder dysfunction (possible cauda equina concern) is documented."
+    "description": "Evidence of bowel or bladder dysfunction (possible cauda equina concern) is documented.",
+    "group": "neuro_finding",
+    "is_concern_criterion": true
   },
   {
     "id": "CM.medication",
-    "description": "Conservative medication treatment (e.g. NSAIDs, muscle relaxants) is documented."
+    "description": "Conservative medication treatment (e.g. NSAIDs, muscle relaxants) is documented.",
+    "group": "conservative_care"
   },
   {
     "id": "CM.physical_therapy",
-    "description": "Physical therapy is documented."
+    "description": "Physical therapy is documented.",
+    "group": "conservative_care"
   },
   {
     "id": "CM.duration",
-    "description": "Conservative treatment duration of at least 6 weeks is documented."
+    "description": "Conservative treatment duration of at least 6 weeks is documented.",
+    "group": "CM.duration"
   },
   {
     "id": "SX.duration",
-    "description": "Symptom duration of at least 6 weeks is documented."
+    "description": "Symptom duration of at least 6 weeks is documented.",
+    "group": "SX.duration"
   },
   {
     "id": "IMG.prior_imaging",
-    "description": "Prior imaging (e.g. X-ray) results are documented."
+    "description": "Prior imaging (e.g. X-ray) results are documented.",
+    "group": "IMG.prior_imaging"
   },
   {
     "id": "RF.red_flag",
-    "description": "A red-flag symptom (e.g. trauma, unexplained weight loss, fever, history of cancer) is documented as present or explicitly ruled out."
+    "description": "A red-flag symptom (e.g. trauma, unexplained weight loss, fever, history of cancer) is documented as present or explicitly ruled out.",
+    "group": "RF.red_flag",
+    "is_concern_criterion": true
   }
 ]

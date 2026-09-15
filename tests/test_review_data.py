@@ -22,8 +22,8 @@ def test_correct_criterion_to_description_matching():
     merged = merge_criteria_with_evidence(CRITERIA, EVIDENCE_REPORT)
 
     assert merged == [
-        {"id": "A", "description": "Criterion A description.", "status": "satisfied", "page_number": 1, "quote": "quote A"},
-        {"id": "B", "description": "Criterion B description.", "status": "not_found", "page_number": None, "quote": None},
+        {"id": "A", "description": "Criterion A description.", "status": "satisfied", "page_number": 1, "quote": "quote A", "concern_present": None},
+        {"id": "B", "description": "Criterion B description.", "status": "not_found", "page_number": None, "quote": None, "concern_present": None},
     ]
 
 

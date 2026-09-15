@@ -12,7 +12,7 @@ from typing import cast
 import anthropic
 from anthropic.types import ToolParam
 
-MODEL = "claude-opus-5"
+MODEL = "claude-sonnet-5"
 
 SUBMIT_EVIDENCE_TOOL = {
     "name": "submit_evidence",
@@ -39,8 +39,21 @@ SUBMIT_EVIDENCE_TOOL = {
                     "Otherwise null."
                 ),
             },
+            "concern_present": {
+                "type": ["boolean", "null"],
+                "description": (
+                    "Only meaningful for a red-flag-style criterion, where "
+                    "'satisfied' can mean two different things: the "
+                    "concerning finding was explicitly ruled out (false), "
+                    "or the concerning finding is actually present (true) "
+                    "and needs closer human review, not a bypass to "
+                    "approval. Required (true or false) when status is "
+                    "'satisfied' and the criterion asks about a red flag "
+                    "or warning sign. Null for every other case."
+                ),
+            },
         },
-        "required": ["status", "page_number", "quote"],
+        "required": ["status", "page_number", "quote", "concern_present"],
         "additionalProperties": False,
     },
     "strict": True,
@@ -51,6 +64,32 @@ def build_prompt(criterion, pages):
     labeled_pages = "\n\n".join(
         f"[PAGE {page['page_number']}]\n{page['text']}" for page in pages
     )
+
+    is_concern_criterion = criterion.get("is_concern_criterion", False)
+
+    if is_concern_criterion:
+        satisfied_rule = """- status "satisfied": the documentation clearly addresses this warning
+  sign either way - either it explicitly states the warning sign is
+  ABSENT / ruled out, or it shows the warning sign IS actually present.
+  Copy the exact supporting sentence(s) as the quote, and give the page
+  number it appears on. Then set concern_present:
+    - ruled out / absent -> concern_present = false
+    - actually present -> concern_present = true. This is not
+      automatically a denial or an approval - it means this case needs
+      a human reviewer's attention, so flag it honestly rather than
+      treating it the same as a clean rule-out."""
+    else:
+        satisfied_rule = """- status "satisfied": you found a clear, direct statement that the
+  actual finding named by the criterion IS PRESENT in the record - not
+  merely that the topic was discussed. Copy the exact supporting
+  sentence(s) as the quote, and give the page number it appears on.
+  Leave concern_present null - this criterion is not a red-flag/warning
+  -sign criterion, so concern_present is never used for it.
+  A statement that explicitly denies, rules out, or reports a
+  normal/negative result for this finding means the finding is NOT
+  present - use "not_found" for that criterion, not "satisfied". For
+  example, "sensation is intact" or "full strength, symmetric" report
+  the absence of the finding, not evidence of it."""
 
     return f"""You are reviewing a patient document packet against ONE policy criterion.
 
@@ -63,9 +102,7 @@ Below is the document text, page by page:
 
 Decide whether this criterion is satisfied:
 
-- status "satisfied": you found a clear, direct statement supporting this
-  criterion. Copy the exact supporting sentence(s) as the quote, and give
-  the page number it appears on.
+{satisfied_rule}
 - status "not_found": you read the document and this specific evidence is
   simply not present.
 - status "unknown": the document is ambiguous, contradictory, unreadable,
@@ -79,6 +116,11 @@ If an exam or assessment was deferred, not performed, or its result was
 not recorded, that is "unknown" - not "not_found". Only use "not_found"
 when the exam or documentation was actually completed and clearly shows
 no relevant finding.
+
+If the document text above is not a clinical/medical record at all (for
+example a grocery list, a weather forecast, or any other unrelated
+content), you must not invent or infer medical evidence from it. Use
+"not_found" in that case - never "satisfied".
 
 Call the submit_evidence tool with your answer."""
 
@@ -113,17 +155,23 @@ def find_evidence(criterion, pages):
     status = result["status"]
     page_number = result.get("page_number")
     quote = result.get("quote")
+    concern_present = result.get("concern_present")
+
+    if not criterion.get("is_concern_criterion", False):
+        concern_present = None
 
     if status == "satisfied" and not verify_quote(quote, pages, page_number):
         status = "unknown"
         page_number = None
         quote = None
+        concern_present = None
 
     return {
         "criterion_id": criterion["id"],
         "status": status,
         "page_number": page_number,
         "quote": quote,
+        "concern_present": concern_present,
     }
 
 
